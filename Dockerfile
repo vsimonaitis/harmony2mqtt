@@ -19,4 +19,4 @@ WORKDIR /harmony2mqtt
 RUN npm install --production
 
 # Set the default command to execute 
-CMD node dist/index.js 
+CMD node dist/harmonyPublisher.js
