@@ -8,7 +8,7 @@ LABEL Vilius Simonaitis
 ADD . /harmony2mqtt
 
 # Set environment prameters
-ENV HARMONY_HOST=192.168.1.7
+ENV HARMONYHUB_HOST=192.168.1.7
 ENV MQTT_HOST=mqtts://localhost:1883
 ENV MQTT_USER=user
 ENV MQTT_PASS=pass
@@ -16,7 +16,7 @@ ENV MQTT_PASS=pass
 # Set the default directory where CMD will execute
 WORKDIR /harmony2mqtt
 
-RUN npm install --production --prefix /var/task
+RUN npm install --production
 
 # Set the default command to execute 
 CMD node dist/harmonyPublisher.js
