@@ -16,7 +16,7 @@ ENV MQTT_PASS=pass
 # Set the default directory where CMD will execute
 WORKDIR /harmony2mqtt
 
-RUN npm install --production
+RUN npm install --production --prefix /var/task
 
 # Set the default command to execute 
 CMD node dist/harmonyPublisher.js
