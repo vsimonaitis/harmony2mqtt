@@ -11,7 +11,7 @@ class HarmonyPublisher {
         this.mqttClient = mqtt.connect(process.env.MQTT_HOST, {
             username: process.env.MQTT_USER,
             password: process.env.MQTT_PASS,
-            clientId: "Harmony2Mqtt_" + process.env.COMPUTERNAME + "_" + +Math.random().toString(16).substr(2, 8),
+            clientId: "Harmony2Mqtt_" + process.env.COMPUTERNAME + "_" + Math.random().toString(16).substr(2, 8),
             connectTimeout: 10 * 1000,
             keepalive: 60 // Seconds
         });
@@ -56,7 +56,9 @@ class HarmonyPublisher {
         }
         else {
             return this.getCurrentActivity().then(activity => {
-                return this.publishMqttMessage('currentActivity', activity);
+                if (activity) {
+                    return this.publishMqttMessage('currentActivity', activity);
+                }
             });
         }
     }
@@ -77,7 +79,8 @@ class HarmonyPublisher {
             .then((activity) => {
             console.log(`Current activity is: ${activity.label}`);
             return activity;
-        });
+        })
+            .catch((error) => { console.error('Error while getCurrentActivity from HarmonyHub', error.message); });
     }
     startActivity(activityName) {
         // start an activity by id, name, or label

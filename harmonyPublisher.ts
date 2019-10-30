@@ -18,7 +18,7 @@ class HarmonyPublisher {
         this.mqttClient = mqtt.connect(process.env.MQTT_HOST, {
             username: process.env.MQTT_USER,
             password: process.env.MQTT_PASS,
-            clientId: "Harmony2Mqtt_" + process.env.COMPUTERNAME + "_" + + Math.random().toString(16).substr(2, 8),
+            clientId: "Harmony2Mqtt_" + process.env.COMPUTERNAME + "_" + Math.random().toString(16).substr(2, 8),
             connectTimeout: 10 * 1000,
             keepalive: 60 // Seconds
         });
