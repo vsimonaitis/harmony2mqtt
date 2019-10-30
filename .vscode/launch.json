@@ -10,7 +10,7 @@
         "name": "Launch Program",
         "program": "${workspaceFolder}/harmonyPublisher.ts",
         "preLaunchTask": "tsc: build - tsconfig.json",
-        "outFiles": ["${workspaceFolder}/out/**/*.js"],
+        "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       }
     ]
   }

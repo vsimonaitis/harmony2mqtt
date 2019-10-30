@@ -1,9 +1,11 @@
 {
   "dependencies": {
-    "@types/mqtt": "^2.5.0",
-    "@types/node": "^12.11.6",
     "dotenv": "^8.2.0",
     "harmony-ws": "^8.1.1",
     "mqtt": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/mqtt": "^2.5.0",
+    "@types/node": "^12.11.6"
   }
 }

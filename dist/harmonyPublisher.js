@@ -7,38 +7,42 @@ class HarmonyPublisher {
         this.publishInterval = null;
         dotenv.config();
         console.log(`Harrmony Hub is at ${process.env.HARMONYHUB_HOST}, MQTT is at ${process.env.MQTT_HOST}`);
-        this.hub = new HarmonyHub(process.env.HARMONYHUB_HOST);
-        this.client = mqtt.connect(process.env.MQTT_HOST, {
+        this.harmonyHub = new HarmonyHub(process.env.HARMONYHUB_HOST);
+        this.mqttClient = mqtt.connect(process.env.MQTT_HOST, {
             username: process.env.MQTT_USER,
             password: process.env.MQTT_PASS,
-            clientId: "Harmony2Mqtt",
-            reconnectPeriod: 1000,
-            connectTimeout: 10 * 1000
+            clientId: "Harmony2Mqtt_" + process.env.COMPUTERNAME + "_" + +Math.random().toString(16).substr(2, 8),
+            connectTimeout: 10 * 1000,
+            keepalive: 60 // Seconds
         });
     }
     start() {
-        this.client.on('connect', function () {
-            console.log(`Connected to MQTT`);
-        });
-        this.client.on('message', function (topic, message) {
+        this.mqttClient.on('connect', () => { console.log(`Connected to MQTT`); });
+        this.mqttClient.on('message', (topic, message, packet) => {
             // message is Buffer
             console.log(message.toString());
             switch (topic) {
                 case HarmonyPublisher.topicPrefix + 'startActivity': {
                     this.startActivity(message.toString());
                 }
+                default:
+                    console.warn("Unknown topic", topic);
             }
         });
+        this.mqttClient.on('reconnect', () => { console.log(`Reconnecting to MQTT`); });
+        this.mqttClient.on('close', () => { });
+        this.mqttClient.on('disconnect', (packet) => { });
+        this.mqttClient.on('error', (error) => { console.error(`MQTT error`, error); });
         // listen for changes to the current activity
-        this.hub.onActivityStarted((activity) => {
+        this.harmonyHub.onActivityStarted((activity) => {
             console.log(`Activity started: ${activity.label}`);
             this.resyncCurrentActivity(activity);
         });
         this.resyncCurrentActivity();
     }
     publishMqttMessage(topic, msg) {
-        if (this.client.connected) {
-            this.client.publish(HarmonyPublisher.topicPrefix + topic, JSON.stringify(msg), { retain: true, qos: 0 });
+        if (this.mqttClient.connected) {
+            this.mqttClient.publish(HarmonyPublisher.topicPrefix + topic, JSON.stringify(msg), { retain: true, qos: 0 });
         }
     }
     resyncCurrentActivity(activity) {
@@ -57,7 +61,7 @@ class HarmonyPublisher {
         }
     }
     getActivities() {
-        return this.hub.getActivities()
+        return this.harmonyHub.getActivities()
             .then((activities) => {
             console.log(activities);
             // [ { id: '-1', name: 'off', label: 'PowerOff' },
@@ -69,7 +73,7 @@ class HarmonyPublisher {
         });
     }
     getCurrentActivity() {
-        return this.hub.getCurrentActivity()
+        return this.harmonyHub.getCurrentActivity()
             .then((activity) => {
             console.log(`Current activity is: ${activity.label}`);
             return activity;
@@ -77,7 +81,7 @@ class HarmonyPublisher {
     }
     startActivity(activityName) {
         // start an activity by id, name, or label
-        this.hub.startActivity(activityName)
+        this.harmonyHub.startActivity(activityName)
             .then((activity) => {
             console.log(`Started activity: ${activity.label}`);
         });
@@ -93,7 +97,7 @@ class HarmonyPublisher {
         // alias for startActivity('off')
         // hub.turnOff();
         // refresh the internal cache
-        this.hub.refresh()
+        this.harmonyHub.refresh()
             .then((activities) => {
             console.log('Updated activity list', activities);
         });
