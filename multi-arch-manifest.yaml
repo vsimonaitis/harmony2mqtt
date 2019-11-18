@@ -1,0 +1,16 @@
+image: vsimonaitis/harmony2mqtt:latest
+manifests:
+  - image: vsimonaitis/harmony2mqtt:amd64
+    platform:
+      architecture: amd64
+      os: linux
+  - image: vsimonaitis/harmony2mqtt:arm32v7
+    platform:
+      architecture: arm
+      os: linux
+      variant: v7
+  - image: vsimonaitis/harmony2mqtt:arm64v8
+    platform:
+      architecture: arm64
+      os: linux
+      variant: v8
