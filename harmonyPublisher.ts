@@ -72,12 +72,16 @@ class HarmonyPublisher {
     }
 
     publishCurrentActivity(activity?: IActivity) {
-        if (activity) {
-            return this.publishMqttMessage('currentActivity', activity);
-        } else {
-            return this.getCurrentActivity().then(activity => {
-                if (activity) { return this.publishMqttMessage('currentActivity', activity); }
-            })
+        try {
+            if (activity) {
+                return this.publishMqttMessage('currentActivity', activity);
+            } else {
+                return this.getCurrentActivity().then(activity => {
+                    if (activity) { return this.publishMqttMessage('currentActivity', activity); }
+                })
+            }
+        } catch (e) {
+            console.error("Failed to update activity", e);
         }
     }
 
