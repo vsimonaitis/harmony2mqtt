@@ -1,7 +1,8 @@
-import HarmonyHub = require('harmony-ws');
+import HarmonyHub from "./harmony-ws"
+import { MqttClient } from 'mqtt';
 import mqtt = require('mqtt')
 import dotenv = require('dotenv');
-import { MqttClient } from 'mqtt';
+
 
 class HarmonyPublisher {
 
@@ -24,8 +25,9 @@ class HarmonyPublisher {
         });
     }
 
-    start() {
-
+    async start() {
+        this.harmonyHub = new HarmonyHub('192.168.1.7');
+        await this.harmonyHub.start();
 
         this.mqttClient.on('connect', () => { console.log(`Connected to MQTT`); });
 

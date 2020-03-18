@@ -1,5 +1,5 @@
 "use strict";
-const HarmonyHub = require("harmony-ws");
+const harmony_ws_1 = require("./harmony-ws");
 const mqtt = require("mqtt");
 const dotenv = require("dotenv");
 class HarmonyPublisher {
@@ -7,7 +7,7 @@ class HarmonyPublisher {
         this.publishInterval = null;
         dotenv.config();
         console.log(`Harrmony Hub is at ${process.env.HARMONYHUB_HOST}, MQTT is at ${process.env.MQTT_HOST}`);
-        this.harmonyHub = new HarmonyHub(process.env.HARMONYHUB_HOST);
+        this.harmonyHub = new harmony_ws_1.default(process.env.HARMONYHUB_HOST);
         this.mqttClient = mqtt.connect(process.env.MQTT_HOST, {
             username: process.env.MQTT_USER,
             password: process.env.MQTT_PASS,
@@ -16,7 +16,9 @@ class HarmonyPublisher {
             keepalive: 60 // Seconds
         });
     }
-    start() {
+    async start() {
+        this.harmonyHub = new harmony_ws_1.default('192.168.1.7');
+        await this.harmonyHub.start();
         this.mqttClient.on('connect', () => { console.log(`Connected to MQTT`); });
         this.mqttClient.on('message', (topic, message, packet) => {
             // message is Buffer
@@ -48,18 +50,23 @@ class HarmonyPublisher {
     resyncCurrentActivity(activity) {
         clearInterval(this.publishInterval);
         this.publishCurrentActivity(activity);
-        this.publishInterval = setInterval(this.publishCurrentActivity.bind(this), 60 * 1000);
+        this.publishInterval = setInterval(() => { this.publishCurrentActivity(); }, 60 * 1000);
     }
     publishCurrentActivity(activity) {
-        if (activity) {
-            return this.publishMqttMessage('currentActivity', activity);
+        try {
+            if (activity) {
+                return this.publishMqttMessage('currentActivity', activity);
+            }
+            else {
+                return this.getCurrentActivity().then(activity => {
+                    if (activity) {
+                        return this.publishMqttMessage('currentActivity', activity);
+                    }
+                });
+            }
         }
-        else {
-            return this.getCurrentActivity().then(activity => {
-                if (activity) {
-                    return this.publishMqttMessage('currentActivity', activity);
-                }
-            });
+        catch (e) {
+            console.error("Failed to update activity", e);
         }
     }
     getActivities() {
