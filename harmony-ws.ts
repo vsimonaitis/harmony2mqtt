@@ -2,6 +2,7 @@ import WebSocketClient from "./websocket-client"
 import request = require("request-promise")
 import _get = require("lodash.get")
 import _find = require("lodash.find")
+
 export default class HarmonyHub {
 
 	private socket: WebSocketClient
@@ -110,6 +111,28 @@ export default class HarmonyHub {
 
 	onActivityStarted(callback: (activity: { label: string }) => void) {
 		this._onActivityStartedCallbacks.push(callback);
+	}
+
+	turnOff() {
+		return this.startActivity('off');
+	}
+
+	async startActivity(id) {
+		return this.getActivities()
+			.then((activities) => {
+				let activity = _find(activities, { name: id });
+				if (!activity) activity = _find(activities, { id });
+				if (!activity) throw new Error('Activity not found');
+				const cmd = 'harmony.activityengine?runactivity';
+				const params = {
+					async: 'false',
+					timestamp: 0,
+					args: { rule: 'start' },
+					activityId: activity.id,
+				};
+				return this.runCmd(cmd, params);
+			});
+
 	}
 
 	private async runCmd<T>(cmd, params) {

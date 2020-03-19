@@ -2,9 +2,9 @@ import WebSocket = require('ws');
 
 export default class WebSocketClient {
     number: number = 0;	// Message number
-    readonly autoReconnectInterval = 5 * 1000;	// ms
+    readonly autoReconnectInterval = 30 * 1000;	// ms
     instance: WebSocket;
-    
+
     constructor(private url: string) {
 
     }
@@ -69,9 +69,17 @@ export default class WebSocketClient {
             this.open();
         }, this.autoReconnectInterval);
     }
-    onopen = function (e) { console.info("WebSocketClient: open", arguments); }
-    onmessage = function (data, number) { console.debug("WebSocketClient: message", arguments); }
-    onerror = function (e) { console.error("WebSocketClient: error", arguments); }
-    onclose = function (e) { console.warn("WebSocketClient: closed", arguments); }
+    onopen = function (e) {
+        console.info("WebSocketClient: open");
+    }
+    onmessage = function (data, number) {
+        //console.debug("WebSocketClient: message", arguments);
+    }
+    onerror = function (e) { 
+        console.error("WebSocketClient: error", e); 
+    }
+    onclose = function (e) { 
+        console.warn("WebSocketClient: closed", e); 
+    }
 
 }

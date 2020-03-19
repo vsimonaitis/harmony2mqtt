@@ -70,7 +70,7 @@ class HarmonyPublisher {
     resyncCurrentActivity(activity?: IActivity) {
         clearInterval(this.publishInterval);
         this.publishCurrentActivity(activity);
-        this.publishInterval = setInterval(() => { this.publishCurrentActivity() }, 60 * 1000);
+        this.publishInterval = setInterval(() => { this.publishCurrentActivity() }, 5 * 60 * 1000);
     }
 
     publishCurrentActivity(activity?: IActivity) {

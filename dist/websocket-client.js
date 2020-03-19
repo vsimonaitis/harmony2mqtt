@@ -6,10 +6,18 @@ class WebSocketClient {
         this.url = url;
         this.number = 0; // Message number
         this.autoReconnectInterval = 5 * 1000; // ms
-        this.onopen = function (e) { console.info("WebSocketClient: open", arguments); };
-        this.onmessage = function (data, number) { console.debug("WebSocketClient: message", arguments); };
-        this.onerror = function (e) { console.error("WebSocketClient: error", arguments); };
-        this.onclose = function (e) { console.warn("WebSocketClient: closed", arguments); };
+        this.onopen = function (e) {
+            console.info("WebSocketClient: open", e);
+        };
+        this.onmessage = function (data, number) {
+            //console.debug("WebSocketClient: message", arguments);
+        };
+        this.onerror = function (e) {
+            console.error("WebSocketClient: error", e);
+        };
+        this.onclose = function (e) {
+            console.warn("WebSocketClient: closed", e);
+        };
     }
     open() {
         return new Promise((resolve, reject) => {
