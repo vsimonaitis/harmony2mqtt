@@ -10,6 +10,7 @@ class HarmonyPublisher {
     private mqttClient: MqttClient;
     private static readonly topicPrefix = '/harmony2mqtt/';
     private publishInterval: NodeJS.Timeout = null;
+    private currentActivityName: string;
 
     constructor() {
         dotenv.config();
@@ -104,7 +105,10 @@ class HarmonyPublisher {
     getCurrentActivity(): Promise<IActivity> {
         return this.harmonyHub.getCurrentActivity()
             .then((activity) => {
-                console.log(`Current activity is: ${activity.label}`);
+                if (this.currentActivityName != activity.name) {
+                    this.currentActivityName == activity.name;
+                    console.log(`Current activity is: ${activity.label}`);
+                }
 
                 return activity;
             })

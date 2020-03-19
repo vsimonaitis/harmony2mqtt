@@ -1,5 +1,6 @@
 import WebSocketClient from "./websocket-client"
 import request = require("request-promise")
+import changeCase = require("change-case")
 import _get = require("lodash.get")
 import _find = require("lodash.find")
 
@@ -59,6 +60,9 @@ export default class HarmonyHub {
 			try {
 				const ob = JSON.parse(data.toString());
 				const { id, type } = ob;
+				_get(ob, 'data.device', []).forEach((device) => {
+					device.label = changeCase.snakeCase(device.label);
+				});
 				if (type === this.EVENT_NOTIFY) this.handleNotify(ob);
 			} catch (err) {
 				console.error(err);
@@ -75,7 +79,7 @@ export default class HarmonyHub {
 			const list = [];
 			activities.forEach((activity) => {
 				const { id, label } = activity;
-				const name = id === '-1' ? 'off' : label;
+				const name = id === '-1' ? 'off' : changeCase.snakeCase(label.trim());
 				list.push({ id, name, label });
 			});
 			resolve(list);
@@ -117,7 +121,8 @@ export default class HarmonyHub {
 		return this.startActivity('off');
 	}
 
-	async startActivity(id) {
+	async startActivity(id: string) {
+		id = changeCase.snakeCase(id.trim());
 		return this.getActivities()
 			.then((activities) => {
 				let activity = _find(activities, { name: id });

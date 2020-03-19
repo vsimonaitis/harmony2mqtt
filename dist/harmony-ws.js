@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const websocket_client_1 = require("./websocket-client");
 const request = require("request-promise");
+const changeCase = require("change-case");
 const _get = require("lodash.get");
 const _find = require("lodash.find");
 class HarmonyHub {
@@ -48,6 +49,9 @@ class HarmonyHub {
             try {
                 const ob = JSON.parse(data.toString());
                 const { id, type } = ob;
+                _get(ob, 'data.device', []).forEach((device) => {
+                    device.label = changeCase.snakeCase(device.label);
+                });
                 if (type === this.EVENT_NOTIFY)
                     this.handleNotify(ob);
             }
@@ -64,7 +68,7 @@ class HarmonyHub {
             const list = [];
             activities.forEach((activity) => {
                 const { id, label } = activity;
-                const name = id === '-1' ? 'off' : label;
+                const name = id === '-1' ? 'off' : changeCase.snakeCase(label.trim());
                 list.push({ id, name, label });
             });
             resolve(list);
@@ -97,6 +101,28 @@ class HarmonyHub {
     }
     onActivityStarted(callback) {
         this._onActivityStartedCallbacks.push(callback);
+    }
+    turnOff() {
+        return this.startActivity('off');
+    }
+    async startActivity(id) {
+        id = changeCase.snakeCase(id.trim());
+        return this.getActivities()
+            .then((activities) => {
+            let activity = _find(activities, { name: id });
+            if (!activity)
+                activity = _find(activities, { id });
+            if (!activity)
+                throw new Error('Activity not found');
+            const cmd = 'harmony.activityengine?runactivity';
+            const params = {
+                async: 'false',
+                timestamp: 0,
+                args: { rule: 'start' },
+                activityId: activity.id,
+            };
+            return this.runCmd(cmd, params);
+        });
     }
     async runCmd(cmd, params) {
         const id = this._msgId++;

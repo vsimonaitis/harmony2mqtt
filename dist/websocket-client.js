@@ -5,9 +5,9 @@ class WebSocketClient {
     constructor(url) {
         this.url = url;
         this.number = 0; // Message number
-        this.autoReconnectInterval = 5 * 1000; // ms
+        this.autoReconnectInterval = 30 * 1000; // ms
         this.onopen = function (e) {
-            console.info("WebSocketClient: open", e);
+            console.info("WebSocketClient: open");
         };
         this.onmessage = function (data, number) {
             //console.debug("WebSocketClient: message", arguments);
