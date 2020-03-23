@@ -73,10 +73,10 @@ export default class HarmonyHub {
 
 
 	async getActivities() {
-		return new Promise<any[]>((resolve, reject) => {
-			const activities = _get(this._config, 'data.activity');
+		return new Promise<IActivity[]>((resolve, reject) => {
+			const activities: IActivity[] = _get(this._config, 'data.activity');
 			if (!activities) reject(new Error('Activities not found'));
-			const list = [];
+			const list: IActivity[] = [];
 			activities.forEach((activity) => {
 				const { id, label } = activity;
 				const name = id === '-1' ? 'off' : changeCase.snakeCase(label.trim());
@@ -113,7 +113,7 @@ export default class HarmonyHub {
 
 	}
 
-	onActivityStarted(callback: (activity: { label: string }) => void) {
+	onActivityStarted(callback: (activity: IActivity) => void) {
 		this._onActivityStartedCallbacks.push(callback);
 	}
 
@@ -135,7 +135,7 @@ export default class HarmonyHub {
 					args: { rule: 'start' },
 					activityId: activity.id,
 				};
-				return this.runCmd(cmd, params);
+				return this.runCmd<IActivity>(cmd, params);
 			});
 
 	}
@@ -189,5 +189,11 @@ export default class HarmonyHub {
 			})
 			.catch(() => { });
 	}
+}
+
+export interface IActivity {
+	id: string;
+	name: string;
+	label: string;
 
 }

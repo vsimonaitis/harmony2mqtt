@@ -72,9 +72,9 @@ class WebSocketClient {
         }
     }
     reconnect(e) {
-        console.log(`WebSocketClient: retry in ${this.autoReconnectInterval}ms`, e);
-        this.instance.removeAllListeners();
+        console.log(`WebSocketClient: retry in ${this.autoReconnectInterval}ms`);
         setTimeout(() => {
+            this.instance.removeAllListeners();
             console.warn("WebSocketClient: reconnecting...");
             this.open();
         }, this.autoReconnectInterval);

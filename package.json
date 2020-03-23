@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@types/change-case": "^2.3.1",
     "change-case": "^4.1.1",
     "dotenv": "^8.2.0",
     "lodash.find": "^4.6.0",
@@ -16,7 +15,8 @@
     "@types/lodash.find": "^4.6.6",
     "@types/lodash.get": "^4.4.6",
     "@types/request-promise": "^4.1.45",
-    "@types/ws": "^6"
+    "@types/ws": "^6",
+    "@types/change-case": "^2.3.1"
   },
   "license": "MIT",
   "repository": "https://github.com/vsimonaitis/harmony2mqtt"

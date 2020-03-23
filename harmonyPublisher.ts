@@ -1,4 +1,4 @@
-import HarmonyHub from "./harmony-ws"
+import HarmonyHub, { IActivity } from "./harmony-ws"
 import { MqttClient } from 'mqtt';
 import mqtt = require('mqtt')
 import dotenv = require('dotenv');
@@ -107,7 +107,9 @@ class HarmonyPublisher {
 
                 return activity;
             })
-            .catch((error: Error) => { console.error('Error while getCurrentActivity from HarmonyHub', error.message); });
+            .catch((error: string) => { 
+                console.error('Error while getCurrentActivity from HarmonyHub', error); 
+            });
     }
 
     startActivity(activityName) {
@@ -140,13 +142,6 @@ class HarmonyPublisher {
             });
 
     }
-}
-
-interface IActivity {
-    id: string;
-    name: string;
-    label: string;
-
 }
 
 export = new HarmonyPublisher().start();

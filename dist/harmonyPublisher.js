@@ -84,7 +84,9 @@ class HarmonyPublisher {
             }
             return activity;
         })
-            .catch((error) => { console.error('Error while getCurrentActivity from HarmonyHub', error.message); });
+            .catch((error) => {
+            console.error('Error while getCurrentActivity from HarmonyHub', error);
+        });
     }
     startActivity(activityName) {
         // start an activity by id, name, or label
