@@ -17,7 +17,6 @@ class HarmonyPublisher {
         });
     }
     async start() {
-        this.harmonyHub = new harmony_ws_1.default('192.168.1.7');
         await this.harmonyHub.start();
         this.mqttClient.on('connect', () => { console.log(`Connected to MQTT`); });
         this.mqttClient.on('message', (topic, message, packet) => {
@@ -73,18 +72,16 @@ class HarmonyPublisher {
         return this.harmonyHub.getActivities()
             .then((activities) => {
             console.log(activities);
-            // [ { id: '-1', name: 'off', label: 'PowerOff' },
-            // { id: '21642159', name: 'chromecast', label: 'Chromecast' },
-            // { id: '26240332', name: 'tv', label: 'TV' },
-            // { id: '26240296', name: 'roku', label: 'Roku' },
-            // { id: '21641746', name: 'blu_ray', label: 'Blu-ray' } ]
             return activities;
         });
     }
     getCurrentActivity() {
         return this.harmonyHub.getCurrentActivity()
             .then((activity) => {
-            console.log(`Current activity is: ${activity.label}`);
+            if (this.currentActivityName != activity.name) {
+                this.currentActivityName = activity.name;
+                console.log(`Current activity is: ${activity.label}`);
+            }
             return activity;
         })
             .catch((error) => { console.error('Error while getCurrentActivity from HarmonyHub', error.message); });
