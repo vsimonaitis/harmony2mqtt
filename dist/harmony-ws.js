@@ -10,7 +10,6 @@ class HarmonyHub {
         this._ip = _ip;
         this.PORT = '8088';
         this.TIMEOUT = 10000;
-        this.PING_INTERVAL = 10000;
         this.DOMAIN = 'svcs.myharmony.com';
         this.ORIGIN = 'http://sl.dhg.myharmony.com';
         this.ENGINE = 'vnd.logitech.harmony/vnd.logitech.harmony.engine';
@@ -143,6 +142,7 @@ class HarmonyHub {
                     const { id, type } = ob;
                     if (msgId == id) {
                         clearTimeout(timeout);
+                        this.socket.off('message', responseHandler);
                         resolve(JSON.parse(data));
                     }
                 }

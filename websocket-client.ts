@@ -1,9 +1,11 @@
 import WebSocket = require('ws');
 
 export default class WebSocketClient {
-    number: number = 0;	// Message number
-    readonly autoReconnectInterval = 30 * 1000;	// ms
-    instance: WebSocket;
+    private number: number = 0;	// Message number
+    private subscriptions = 0;
+    private readonly autoReconnectInterval = 30 * 1000;	// ms
+    private readonly responseTimeout = 10 * 1000;	// ms
+    private instance: WebSocket;
 
     constructor(private url: string) {
 
@@ -15,7 +17,7 @@ export default class WebSocketClient {
             let timeout: NodeJS.Timeout;
             this.instance.on('open', (e) => {
                 this.onopen(e);
-                timeout = setInterval(() => this.instance.ping(), 10000)
+                timeout = setInterval(() => this.instance.ping(), this.responseTimeout)
                 resolve(this);
             });
             this.instance.on('message', (data) => {
@@ -49,9 +51,13 @@ export default class WebSocketClient {
     }
 
     on(event: 'message', listener: (this: WebSocket, data: WebSocket.Data) => void) {
+        this.subscriptions++;
+        //console.debug(`Subscription added. Total ${this.subscriptions}`);
         return this.instance.on(event, listener);
     }
     off(event: string | symbol, listener: (...args: any[]) => void) {
+        this.subscriptions--;
+        //console.debug(`Subscription removed. Total ${this.subscriptions}`);
         return this.instance.off(event, listener);
     }
     send(data, option) {

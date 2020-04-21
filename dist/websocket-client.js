@@ -5,7 +5,9 @@ class WebSocketClient {
     constructor(url) {
         this.url = url;
         this.number = 0; // Message number
+        this.subscriptions = 0;
         this.autoReconnectInterval = 30 * 1000; // ms
+        this.responseTimeout = 10 * 1000; // ms
         this.onopen = function (e) {
             console.info("WebSocketClient: open");
         };
@@ -25,7 +27,7 @@ class WebSocketClient {
             let timeout;
             this.instance.on('open', (e) => {
                 this.onopen(e);
-                timeout = setInterval(() => this.instance.ping(), 10000);
+                timeout = setInterval(() => this.instance.ping(), this.responseTimeout);
                 resolve(this);
             });
             this.instance.on('message', (data) => {
@@ -58,9 +60,13 @@ class WebSocketClient {
         });
     }
     on(event, listener) {
+        this.subscriptions++;
+        //console.debug(`Subscription added. Total ${this.subscriptions}`);
         return this.instance.on(event, listener);
     }
     off(event, listener) {
+        this.subscriptions--;
+        //console.debug(`Subscription removed. Total ${this.subscriptions}`);
         return this.instance.off(event, listener);
     }
     send(data, option) {

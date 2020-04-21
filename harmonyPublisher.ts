@@ -12,6 +12,9 @@ class HarmonyPublisher {
     private publishInterval: NodeJS.Timeout = null;
     private currentActivityName: string;
 
+    private static readonly pingInterval = 5 * 1000;
+    private static readonly mqttTimeout = 10 * 1000;
+
     constructor() {
         dotenv.config();
         console.log(`Harrmony Hub is at ${process.env.HARMONYHUB_HOST}, MQTT is at ${process.env.MQTT_HOST}`);
@@ -21,7 +24,7 @@ class HarmonyPublisher {
             username: process.env.MQTT_USER,
             password: process.env.MQTT_PASS,
             clientId: "Harmony2Mqtt_" + process.env.COMPUTERNAME + "_" + Math.random().toString(16).substr(2, 8),
-            connectTimeout: 10 * 1000,
+            connectTimeout: HarmonyPublisher.mqttTimeout,
             keepalive: 60 // Seconds
         });
     }
@@ -71,7 +74,7 @@ class HarmonyPublisher {
     resyncCurrentActivity(activity?: IActivity) {
         clearInterval(this.publishInterval);
         this.publishCurrentActivity(activity);
-        this.publishInterval = setInterval(() => { this.publishCurrentActivity() }, 5 * 60 * 1000);
+        this.publishInterval = setInterval(() => { this.publishCurrentActivity() }, HarmonyPublisher.pingInterval);
     }
 
     publishCurrentActivity(activity?: IActivity) {

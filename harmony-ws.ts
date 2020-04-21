@@ -9,7 +9,6 @@ export default class HarmonyHub {
 	private socket: WebSocketClient
 	readonly PORT = '8088';
 	readonly TIMEOUT = 10000;
-	readonly PING_INTERVAL = 10000;
 	readonly DOMAIN = 'svcs.myharmony.com';
 	readonly ORIGIN = 'http://sl.dhg.myharmony.com';
 	readonly ENGINE = 'vnd.logitech.harmony/vnd.logitech.harmony.engine';
@@ -160,6 +159,7 @@ export default class HarmonyHub {
 					const { id, type } = ob;
 					if (msgId == id) {
 						clearTimeout(timeout);
+						this.socket.off('message', responseHandler);
 						resolve(JSON.parse(data));
 					}
 				} catch (err) {

@@ -12,7 +12,7 @@ class HarmonyPublisher {
             username: process.env.MQTT_USER,
             password: process.env.MQTT_PASS,
             clientId: "Harmony2Mqtt_" + process.env.COMPUTERNAME + "_" + Math.random().toString(16).substr(2, 8),
-            connectTimeout: 10 * 1000,
+            connectTimeout: HarmonyPublisher.mqttTimeout,
             keepalive: 60 // Seconds
         });
     }
@@ -49,7 +49,7 @@ class HarmonyPublisher {
     resyncCurrentActivity(activity) {
         clearInterval(this.publishInterval);
         this.publishCurrentActivity(activity);
-        this.publishInterval = setInterval(() => { this.publishCurrentActivity(); }, 5 * 60 * 1000);
+        this.publishInterval = setInterval(() => { this.publishCurrentActivity(); }, HarmonyPublisher.pingInterval);
     }
     publishCurrentActivity(activity) {
         try {
@@ -113,5 +113,7 @@ class HarmonyPublisher {
     }
 }
 HarmonyPublisher.topicPrefix = '/harmony2mqtt/';
+HarmonyPublisher.pingInterval = 5 * 1000;
+HarmonyPublisher.mqttTimeout = 10 * 1000;
 module.exports = new HarmonyPublisher().start();
 //# sourceMappingURL=harmonyPublisher.js.map
