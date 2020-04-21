@@ -12,7 +12,7 @@ class HarmonyPublisher {
     private publishInterval: NodeJS.Timeout = null;
     private currentActivityName: string;
 
-    private static readonly pingInterval = 5 * 1000;
+    private static readonly pingInterval = 5 * 60 * 1000;
     private static readonly mqttTimeout = 10 * 1000;
 
     constructor() {
