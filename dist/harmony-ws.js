@@ -136,18 +136,20 @@ class HarmonyHub {
     async responseAwait(msgId) {
         return new Promise((resolve, reject) => {
             let timeout;
-            const responseHandler = (data) => {
+            let responseHandler = (data) => {
                 try {
                     const ob = JSON.parse(data.toString());
                     const { id, type } = ob;
                     if (msgId == id) {
-                        clearTimeout(timeout);
-                        this.socket.off('message', responseHandler);
                         resolve(JSON.parse(data));
                     }
                 }
                 catch (err) {
                     console.error(err);
+                }
+                finally {
+                    clearTimeout(timeout);
+                    this.socket.off('message', responseHandler);
                 }
             };
             timeout = setTimeout(() => {

@@ -113,7 +113,7 @@ class HarmonyPublisher {
     }
 }
 HarmonyPublisher.topicPrefix = '/harmony2mqtt/';
-HarmonyPublisher.pingInterval = 5 * 1000;
+HarmonyPublisher.pingInterval = 5 * 60 * 1000;
 HarmonyPublisher.mqttTimeout = 10 * 1000;
 module.exports = new HarmonyPublisher().start();
 //# sourceMappingURL=harmonyPublisher.js.map
