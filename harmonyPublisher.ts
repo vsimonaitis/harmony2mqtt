@@ -8,7 +8,7 @@ class HarmonyPublisher {
 
     private harmonyHub: any;
     private mqttClient: MqttClient;
-    private static readonly topicPrefix = '/harmony2mqtt/';
+    private static readonly topicPrefix = process.env.MQTT_PREFIX || 'harmony2mqtt/';
     private publishInterval: NodeJS.Timeout = null;
     private currentActivityName: string;
 
@@ -34,6 +34,7 @@ class HarmonyPublisher {
         await this.harmonyHub.start();
 
         this.mqttClient.on('connect', () => { console.log(`Connected to MQTT`); });
+        this.publishMqttMessage('status', { host: process.env.HARMONYHUB_HOST});
 
         this.mqttClient.on('message', (topic, message, packet) => {
             // message is Buffer
